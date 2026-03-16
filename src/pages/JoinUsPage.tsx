@@ -85,9 +85,13 @@ const options: CardOption[] = [
 ];
 
 export default function JoinUsScreen() {
-  const { state, setAccountType, nextStep } = useOnboarding();
+  const { state, reset, setAccountType, nextStep } = useOnboarding();
 
   function handleSelect(id: AccountType) {
+    if (state.accountType !== null && state.accountType !== id) {
+      sessionStorage.removeItem("onboarding");
+      reset();
+    }
     setAccountType(id);
     nextStep();
   }

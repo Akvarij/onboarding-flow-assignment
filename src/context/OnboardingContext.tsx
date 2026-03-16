@@ -26,7 +26,8 @@ type OnboardingAction =
   | { type: "REMOVE_MEMBER"; id: string }
   | { type: "NEXT_STEP" }
   | { type: "PREV_STEP" }
-  | { type: "COMPLETE" };
+  | { type: "COMPLETE" }
+  | { type: "RESET" };
 
 const initialState: OnboardingState = {
   accountType: null,
@@ -39,13 +40,16 @@ const initialState: OnboardingState = {
 
 function onboardingReducer(
   state: OnboardingState,
-  action: OnboardingAction
+  action: OnboardingAction,
 ): OnboardingState {
   switch (action.type) {
     case "SET_ACCOUNT_TYPE":
       return { ...state, accountType: action.payload };
     case "UPDATE_REGISTRATION":
-      return { ...state, registration: { ...state.registration, ...action.payload } };
+      return {
+        ...state,
+        registration: { ...state.registration, ...action.payload },
+      };
     case "UPDATE_PROFILE":
       return { ...state, profile: { ...state.profile, ...action.payload } };
     case "ADD_MEMBER":
@@ -57,17 +61,22 @@ function onboardingReducer(
       return {
         ...state,
         members: state.members.map((m) =>
-          m.id === action.id ? { ...m, ...action.payload } : m
+          m.id === action.id ? { ...m, ...action.payload } : m,
         ),
       };
     case "REMOVE_MEMBER":
-      return { ...state, members: state.members.filter((m) => m.id !== action.id) };
+      return {
+        ...state,
+        members: state.members.filter((m) => m.id !== action.id),
+      };
     case "NEXT_STEP":
       return { ...state, step: state.step + 1 };
     case "PREV_STEP":
       return { ...state, step: Math.max(0, state.step - 1) };
     case "COMPLETE":
       return { ...state, completed: true };
+    case "RESET":
+      return { ...initialState };
     default:
       return state;
   }
@@ -85,6 +94,7 @@ interface OnboardingContextValue {
   nextStep: () => void;
   prevStep: () => void;
   complete: () => void;
+  reset: () => void;
 }
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null);
@@ -118,6 +128,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const nextStep = () => dispatch({ type: "NEXT_STEP" });
   const prevStep = () => dispatch({ type: "PREV_STEP" });
   const complete = () => dispatch({ type: "COMPLETE" });
+  const reset = () => dispatch({ type: "RESET" });
 
   return (
     <OnboardingContext.Provider
@@ -133,6 +144,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         nextStep,
         prevStep,
         complete,
+        reset,
       }}
     >
       {children}
@@ -141,4 +153,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 }
 
 export { OnboardingContext };
-export type { OnboardingState, OnboardingAction, OnboardingContextValue, AccountType, Member };
+export type {
+  OnboardingState,
+  OnboardingAction,
+  OnboardingContextValue,
+  AccountType,
+  Member,
+};
