@@ -14,22 +14,23 @@ export default function RegisterScreen() {
     handleSubmit,
     formState: { errors },
   } = useForm<{
-    fullName: string;
+    name: string;
     email: string;
     password: string;
-    terms: string;
+    terms: boolean;
   }>({
     defaultValues: {
-      fullName: (state.registration.fullName as string) ?? "",
+      name: (state.registration.name as string) ?? "",
       email: (state.registration.email as string) ?? "",
       password: "", // don't restore hashed password
     },
   });
 
   async function onSubmit(data: {
-    fullName: string;
+    name: string;
     email: string;
     password: string;
+    terms: boolean;
   }) {
     const hashedPassword = await hashPassword(data.password);
     updateRegistration({ ...data, password: hashedPassword });
@@ -95,7 +96,7 @@ export default function RegisterScreen() {
           Your fullname*
         </label>
         <Controller
-          name="fullName"
+          name="name"
           control={control}
           rules={{
             required: "Your fullname is required",
@@ -107,7 +108,7 @@ export default function RegisterScreen() {
           render={({ field }) => (
             <input
               {...field}
-              id="fullName"
+              id="name"
               placeholder="Enter fullname"
               className={`
                 group flex h-[64px] w-full items-center gap-4 rounded-md border px-5 py-4 text-left
@@ -117,8 +118,8 @@ export default function RegisterScreen() {
             />
           )}
         />
-        {errors.fullName && (
-          <p className="text-red-600 mt-2">{errors.fullName.message}</p>
+        {errors.name && (
+          <p className="text-red-600 mt-2">{errors.name.message}</p>
         )}
         <label
           htmlFor="email"
@@ -216,11 +217,13 @@ export default function RegisterScreen() {
               rules={{
                 required: "This is required",
               }}
-              render={({ field }) => (
+              render={({ field: { value, onChange, ...rest } }) => (
                 <input
                   id="terms"
-                  {...field}
+                  {...rest}
                   type="checkbox"
+                  checked={!!value}
+                  onChange={(e) => onChange(e.target.checked)}
                   className="w-4 h-4 accent-blue-600 cursor-pointer"
                 />
               )}

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import AuthLayout from "../components/AuthLayout";
 import successImage from "../assets/success-image.png";
 import { useOnboarding } from "../hooks/useOnboarding";
+import type { RegisterPayload } from "../context/OnboardingContext";
 
 export default function SuccessScreen() {
   const { state, prevStep } = useOnboarding();
@@ -27,17 +28,22 @@ export default function SuccessScreen() {
   );
 
   useEffect(() => {
+    const payload: RegisterPayload = {
+      accountType: state.accountType as RegisterPayload["accountType"],
+      name: state.registration.name as string,
+      email: state.registration.email as string,
+      password: state.registration.password as string,
+      terms: state.registration.terms as boolean,
+      address: state.profile.address as string,
+      country: state.profile.country as RegisterPayload["country"],
+      team: state.members.map((m) => m.address),
+    };
     fetch("/api/register", {
       method: "POST",
       headers: { "Content-type": "application/json" },
-      body: JSON.stringify({
-        accountType: state.accountType,
-        ...state.registration,
-        ...state.profile,
-        members: state.members,
-      }),
+      body: JSON.stringify(payload),
     });
-  });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AuthLayout topLeft={back}>

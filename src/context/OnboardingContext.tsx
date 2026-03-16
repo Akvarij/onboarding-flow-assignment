@@ -8,6 +8,17 @@ interface Member {
   address: string;
 }
 
+interface RegisterPayload {
+  accountType: "individual" | "business";
+  name: string;
+  email: string;
+  password: string;
+  terms: boolean;
+  address: string;
+  country: "SL" | "US" | "EN";
+  team: string[];
+}
+
 interface OnboardingState {
   accountType: AccountType;
   registration: Record<string, unknown>;
@@ -153,10 +164,12 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 }
 
 export { OnboardingContext };
+
 export type {
   OnboardingState,
   OnboardingAction,
   OnboardingContextValue,
   AccountType,
   Member,
+  RegisterPayload,
 };

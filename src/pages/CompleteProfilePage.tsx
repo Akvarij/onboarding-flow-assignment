@@ -124,13 +124,13 @@ export default function CompleteProfileScreen() {
                 <option value="" disabled>
                   Please select
                 </option>
-                <option value="+386" className="text-black">
+                <option value="SL" className="text-black">
                   Slovenia(SL)
                 </option>
-                <option value="+1" className="text-black">
+                <option value="US" className="text-black">
                   USA(US)
                 </option>
-                <option value="+44" className="text-black">
+                <option value="EN" className="text-black">
                   England(EN)
                 </option>
               </select>
